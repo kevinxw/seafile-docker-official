@@ -112,7 +112,7 @@ RUN apt-get update && \
     mkdir -p /var/cache/matplotlib && \
     chown -R seafile:seafile /var/cache/matplotlib
 
-COPY --chown=seafile:seafile image/seafile-general/scripts /scripts
+COPY --chown=seafile:seafile /scripts /scripts
 
 # Add version in container context
 ENV SEAFILE_VERSION=${SEAFILE_VERSION}
