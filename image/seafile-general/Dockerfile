@@ -66,7 +66,7 @@ RUN pip3 install --timeout=3600 --target seafile-server-${SEAFILE_VERSION}/seahu
 # Fix import not found when running seafile
 RUN ln -s /usr/bin/python3 seafile-server-${SEAFILE_VERSION}/seafile/lib/python3.6
 
-FROM debian:${SYSTEM}-slim AS seafile
+FROM debian:${SYSTEM}-slim AS seafile-server
 
 ARG SEAFILE_VERSION
 
@@ -112,7 +112,7 @@ RUN apt-get update && \
     mkdir -p /var/cache/matplotlib && \
     chown -R seafile:seafile /var/cache/matplotlib
 
-COPY --chown=seafile:seafile scripts /scripts
+COPY --chown=seafile:seafile image/seafile-general/scripts /scripts
 
 # Add version in container context
 ENV SEAFILE_VERSION=${SEAFILE_VERSION}
