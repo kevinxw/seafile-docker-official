@@ -1,5 +1,5 @@
 ARG SEAFILE_VERSION=8.0.7
-ARG SYSTEM=bulleye
+ARG SYSTEM=bullseye
 
 FROM --platform=${TARGETPLATFORM} debian:${SYSTEM} AS builder
 
