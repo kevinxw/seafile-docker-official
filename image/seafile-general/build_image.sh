@@ -88,6 +88,9 @@ fi
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $ROOT_DIR
 
+rm -rf "scripts"
+cp -rf "../../scripts_${SEAFILE_VERSION_ARR[0]}.0" ./scripts
+
 # Build image
 docker buildx build $OUTPUT --platform "$MULTIARCH_PLATFORMS" --build-arg "SEAFILE_VERSION=${SEAFILE_VERSION}" -t "${DOCKER_USER}/${REPO}:latest" -t "${DOCKER_USER}/${REPO}:${SEAFILE_VERSION}" -t "${DOCKER_USER}/${REPO}:${SEAFILE_VERSION_ARR[0]}" -t "${DOCKER_USER}/${REPO}:${SEAFILE_VERSION_ARR[0]}.${SEAFILE_VERSION_ARR[1]}" ${BUILD_ARGS} ${OPTS} -f "$DOCKERFILE" "$DOCKERFILE_DIR"
 
