@@ -160,13 +160,13 @@ def init_seafile_server():
         fp.write("""CACHES = {
     'default': {
         'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-        'LOCATION': 'memcached:11211',
+        'LOCATION': '%s',
     },
     'locmem': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
 }
-COMPRESS_CACHE_BACKEND = 'locmem'""")
+COMPRESS_CACHE_BACKEND = 'locmem'""" % (get_conf('MEMCACHED_ADDR', 'memcached:11211')))
         fp.write('\n')
         fp.write("TIME_ZONE = '{time_zone}'".format(time_zone=os.getenv('TIME_ZONE',default='Etc/UTC')))
         fp.write('\n')

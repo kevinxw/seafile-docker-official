@@ -21,7 +21,6 @@ while [ 1 ]; do
     fi
 done
 
-
 # start cluster server
 if [[ $CLUSTER_SERVER == "true" && $SEAFILE_SERVER == "seafile-pro-server" ]] ;then
     /scripts/cluster_server.sh enterpoint &

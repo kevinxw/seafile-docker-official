@@ -1186,8 +1186,8 @@ import os
 daemon = True
 workers = 5
 
-# default localhost:8000
-bind = "127.0.0.1:8000"
+# default 0.0.0.0:8000
+bind = "0.0.0.0:8000"
 
 # Pid
 pids_dir = '%(pids_dir)s'
