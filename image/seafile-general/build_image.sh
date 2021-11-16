@@ -89,6 +89,7 @@ ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $ROOT_DIR
 
 rm -rf "scripts"
+echo "Copying scripts_${SEAFILE_VERSION_ARR[0]}.0 .."
 cp -rf "../../scripts_${SEAFILE_VERSION_ARR[0]}.0" ./scripts
 
 # Build image
@@ -96,4 +97,5 @@ docker buildx build $OUTPUT --platform "$MULTIARCH_PLATFORMS" --build-arg "SEAFI
 
 export DOCKER_CLI_EXPERIMENTAL=disabled
 
+rm -rf scripts
 cd -
