@@ -21,13 +21,36 @@ while [ 1 ]; do
     fi
 done
 
+if [ -z "$PUID" ]; then
+    export PUID=$(id -u seafile)
+elif [ "$(id -u seafile)" -ne "${PUID}" ]; then
+    log "Updating UID to $PUID"
+    usermod -u $PUID seafile
+fi
+
+if [ -z "$PGID" ]; then
+    export PGID=$(id -g seafile)
+elif [ "$(id -g seafile)" -ne "${PGID}" ]; then
+    log "Updating GID to $PGID"
+    groupmod -g $PGID seafile
+fi
+
+chown -R seafile:seafile /opt/seafile
+chown -R seafile:seafile /scripts
+chown -R seafile:seafile /templates
+chown -R seafile:seafile /shared
+mkdir -p /bootstrap
+chown -R seafile:seafile /bootstrap
+chown -R :seafile /etc/nginx/sites-enabled
+chmod 775 -R /etc/nginx/sites-enabled
+
 # start cluster server
 if [[ $CLUSTER_SERVER == "true" && $SEAFILE_SERVER == "seafile-pro-server" ]] ;then
-    /scripts/cluster_server.sh enterpoint &
+    su seafile -pPc /scripts/cluster_server.sh enterpoint &
 
 # start server
 else
-    /scripts/start.py &
+    su seafile -pPc /scripts/start.py &
 fi
 
 

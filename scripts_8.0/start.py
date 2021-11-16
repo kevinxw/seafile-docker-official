@@ -50,7 +50,7 @@ def main():
     if is_https():
         init_letsencrypt()
     generate_local_nginx_conf()
-    call('nginx -s reload')
+    call('sudo nginx -s reload')
 
     wait_for_mysql()
     init_seafile_server()
@@ -70,6 +70,7 @@ def main():
     try:
         call('{} start'.format(get_script('seafile.sh')))
         call('{} start'.format(get_script('seahub.sh')))
+        call('{} start /seafile-fuse'.format(get_script('seaf-fuse.sh')))
     finally:
         if exists(password_file):
             os.unlink(password_file)

@@ -32,7 +32,7 @@ def main(args):
     os.chdir(installdir)
     # call('/scripts/create_data_links.sh')
     # check_upgrade()
-    # call('service nginx start &')
+    # call('sudo service nginx start &')
 
     admin_pw = {
         'email': get_conf('SEAFILE_ADMIN_EMAIL', 'me@example.com'),

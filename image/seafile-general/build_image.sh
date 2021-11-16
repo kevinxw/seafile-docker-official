@@ -71,17 +71,17 @@ fi
 docker buildx use $BUILDER
 
 # Fix docker multiarch building when host local IP changes
-BUILDER_CONTAINER="$(docker ps -qf name=${BUILDER})"
+BUILDER_CONTAINER=$(docker ps -qf name=${BUILDER})
 if [ ! -z "${BUILDER_CONTAINER}" ]; then
   sleep 2
   if [ -z "${NO_BUILD_CACHE}" ]; then
     echo 'Restarting builder container..'
-    docker restart "${BUILDER_CONTAINER}"
+    docker restart ${BUILDER_CONTAINER}
     sleep 10
   else
     echo 'Deleting builder container..'
     # This will clear built image cache.
-    docker rm --force "${BUILDER_CONTAINER}"
+    docker rm --force ${BUILDER_CONTAINER}
    fi
 fi
 

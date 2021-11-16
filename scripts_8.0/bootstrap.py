@@ -33,7 +33,7 @@ def gen_custom_dir():
     custom_dir = join(installdir, 'seahub/media/custom')
     if not exists(dst_custom_dir):
         os.mkdir(dst_custom_dir)
-        call('rm -rf %s' % custom_dir)
+        call('sudo rm -rf %s' % custom_dir)
         call('ln -sf %s %s' % (dst_custom_dir, custom_dir))
 
 def init_letsencrypt():
@@ -74,7 +74,7 @@ def init_letsencrypt():
         render_template('/templates/seafile.nginx.conf.template',
                         '/etc/nginx/sites-enabled/seafile.nginx.conf', context)
 
-    call('nginx -s reload')
+    call('sudo nginx -s reload')
     time.sleep(2)
 
     call('/scripts/ssl.sh {0} {1}'.format(ssl_dir, domain))
@@ -103,7 +103,7 @@ def generate_local_nginx_conf():
         )
         nginx_etc_file = '/etc/nginx/sites-enabled/seafile.nginx.conf'
         nginx_shared_file = '/shared/nginx/conf/seafile.nginx.conf'
-        call('mv {0} {1} && ln -sf {1} {0}'.format(nginx_etc_file, nginx_shared_file))
+        call('sudo mv {0} {1} && sudo ln -sf {1} {0}'.format(nginx_etc_file, nginx_shared_file))
 
 def is_https():
     return get_conf('SEAFILE_SERVER_LETSENCRYPT', 'false').lower() == 'true'
@@ -111,7 +111,7 @@ def is_https():
 def site_base():
     domain = get_conf('SEAFILE_SERVER_HOSTNAME', 'seafile.example.com')
     proto = 'https' if is_https() else 'http'
-    return get_conf('SEAFILE_SITE_BASE', '{proto}://{domain}"'.format(proto=proto, domain=domain))
+    return get_conf('SEAFILE_SITE_BASE', '{proto}://{domain}'.format(proto=proto, domain=domain))
 
 def parse_args():
     ap = argparse.ArgumentParser()
@@ -175,7 +175,7 @@ COMPRESS_CACHE_BACKEND = 'locmem'""" % (get_conf('MEMCACHED_ADDR', 'memcached:11
         fp.write('\n')
         fp.write("TIME_ZONE = '{time_zone}'".format(time_zone=os.getenv('TIME_ZONE',default='Etc/UTC')))
         fp.write('\n')
-        fp.write('FILE_SERVER_ROOT = "{base}/seafhttp"'.format(base=site_base()))
+        fp.write("FILE_SERVER_ROOT = '{base}/seafhttp'".format(base=site_base()))
         fp.write('\n')
 
     # Disabled the Elasticsearch process on Seafile-container

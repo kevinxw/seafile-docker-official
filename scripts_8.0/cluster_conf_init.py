@@ -45,7 +45,7 @@ def main():
         if is_https():
             init_letsencrypt()
         generate_local_nginx_conf()
-        call('nginx -s reload')
+        call('sudo nginx -s reload')
 
         print('\nInit success\n')
     else:

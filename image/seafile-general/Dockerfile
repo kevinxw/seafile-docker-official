@@ -9,7 +9,7 @@ ARG TARGETARCH
 
 RUN apt-get update --fix-missing && \
     # Utility tools
-    apt-get install -y vim htop net-tools psmisc wget curl git && \
+    apt-get install -y vim htop sudo net-tools psmisc wget curl git && \
     # For suport set local time zone.
     export DEBIAN_FRONTEND=noninteractive && apt-get install tzdata -y && \
     # Nginx
@@ -28,14 +28,26 @@ RUN apt-get update --fix-missing && \
       django==2.2.* && rm -r /root/.cache/pip && \
     pip3 install --timeout=3600 future mysqlclient Pillow pylibmc captcha jinja2 \
     sqlalchemy django-pylibmc django-simple-captcha pyjwt && \
-    rm -r /root/.cache/pip
+    rm -r /root/.cache/pip && \
+    # Generate locale
+    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8 ; \
+    # Create Seafile User.
+    useradd -ms /bin/bash -G sudo seafile && \
+    # Add user to fuse group
+    groupadd fuse && \
+    usermod -a -G fuse seafile && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers && \
+    mkdir -p /var/cache/matplotlib && \
+    chown -R seafile:seafile /var/cache/matplotlib
 
 # Seafile
 WORKDIR /opt/seafile
 
 # Scripts
-COPY scripts /scripts
-COPY templates /templates
+COPY --chown=seafile:seafile scripts /scripts
+COPY --chown=seafile:seafile templates /templates
 COPY services /services
 RUN chmod u+x /scripts/* && \
     mkdir -p /etc/my_init.d && \
@@ -45,6 +57,7 @@ RUN chmod u+x /scripts/* && \
     rm -f /etc/nginx/sites-enabled/* /etc/nginx/conf.d/* && \
     mv /services/nginx.conf /etc/nginx/nginx.conf && \
     mv /services/nginx.sh /etc/service/nginx/run && \
+    rm -rf /services && \
     case "${TARGETARCH}" in \
     "amd64") \
       SEAFILE_URL="https://download.seadrive.org/seafile-server_${SEAFILE_VERSION}_x86-64.tar.gz" ;; \
@@ -57,6 +70,7 @@ RUN chmod u+x /scripts/* && \
     wget -c "${SEAFILE_URL}" -O seafile-server.tar.gz && \
     tar -zxvf seafile-server.tar.gz && \
     rm -f seafile-server.tar.gz && \
+    chown -R seafile:seafile /opt/seafile && \
     # For using TLS connection to LDAP/AD server with docker-ce.
     find /opt/seafile/ \( -name "liblber-*" -o -name "libldap-*" -o -name "libldap_r*" -o -name "libsasl2.so*" -o -name "libcrypt.so.1" \) -delete
 
