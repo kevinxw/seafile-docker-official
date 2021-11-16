@@ -15,6 +15,9 @@ import uuid
 import warnings
 import socket
 from configparser import ConfigParser
+from utils import (
+    get_conf, site_base
+)
 
 import pymysql
 
@@ -811,7 +814,13 @@ class CcnetConfigurator(AbstractConfigurator):
     def generate(self):
         print('Generating ccnet configuration ...\n')
         with open(self.ccnet_conf, 'w') as fp:
-            fp.write('[General]\nSERVICE_URL = http://%s/\n' % self.ip_or_domain)
+            base = site_base()
+            fp.write('[General]\nSERVICE_URL = %s/\n' % base)
+            if base.startswith('https://'):
+                fp.write("""
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+""")
 
         self.generate_db_conf()
 
@@ -839,7 +848,13 @@ class CcnetConfigurator(AbstractConfigurator):
         Utils.write_config(config, self.ccnet_conf)
         time.sleep(1)
         with open(self.ccnet_conf, 'w') as fp:
-            fp.write('[General]\nSERVICE_URL = http://%s/\n' % self.ip_or_domain)
+            base = site_base()
+            fp.write('[General]\nSERVICE_URL = %s/\n' % base)
+            if base.startswith('https://'):
+                fp.write("""
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+""")
 
         self.generate_db_conf()
 

@@ -108,6 +108,11 @@ def generate_local_nginx_conf():
 def is_https():
     return get_conf('SEAFILE_SERVER_LETSENCRYPT', 'false').lower() == 'true'
 
+def site_base():
+    domain = get_conf('SEAFILE_SERVER_HOSTNAME', 'seafile.example.com')
+    proto = 'https' if is_https() else 'http'
+    return get_conf('SEAFILE_SITE_BASE', '{proto}://{domain}"'.format(proto=proto, domain=domain))
+
 def parse_args():
     ap = argparse.ArgumentParser()
     ap.add_argument('--parse-ports', action='store_true')
@@ -170,7 +175,7 @@ COMPRESS_CACHE_BACKEND = 'locmem'""" % (get_conf('MEMCACHED_ADDR', 'memcached:11
         fp.write('\n')
         fp.write("TIME_ZONE = '{time_zone}'".format(time_zone=os.getenv('TIME_ZONE',default='Etc/UTC')))
         fp.write('\n')
-        fp.write('FILE_SERVER_ROOT = "{proto}://{domain}/seafhttp"'.format(proto=proto, domain=domain))
+        fp.write('FILE_SERVER_ROOT = "{base}/seafhttp"'.format(base=site_base()))
         fp.write('\n')
 
     # Disabled the Elasticsearch process on Seafile-container
